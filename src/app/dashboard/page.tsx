@@ -139,7 +139,7 @@ export default function Dashboard() {
   }
 
   if (!session) {
-    router.push("/"); // Redirect to login page if not authenticated
+    router.push("/"); // Redirect to login page if not authenticatedt
     return null;
   }
   return (
