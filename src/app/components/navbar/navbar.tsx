@@ -17,8 +17,10 @@ import {
 } from "@/store/searchSlice";
 import { useSelector } from "react-redux";
 import UpdatePassword from "../common-comp/update-password";
+import { webSocket } from "@/web-socket";
 
-const webSocket = io("http://localhost:4000");
+// const webSocket = io("http://localhost:5000");
+// const webSocket = io(process.env.DEVELOPMENT_SOCKET_URL);
 
 const Navbar = () => {
   //get pathname

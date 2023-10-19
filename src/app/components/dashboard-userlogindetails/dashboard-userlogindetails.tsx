@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { UserListTable } from "../chatbox/userlist-table";
+import { calculateTotalHours } from "./utils";
+import { useSession } from "next-auth/react";
 
-export const DashboardUserLoginTable = ({
-  toggleWs,
-}: {
-  toggleWs: any;
-}) => {
+export const DashboardUserLoginTable = ({ toggleWs }: { toggleWs: any }) => {
   //get pathname
   let pathname: string = "";
 
@@ -25,25 +23,44 @@ export const DashboardUserLoginTable = ({
   }
 
   const [userList, setUserList] = useState([]);
-  const [activeUserList, setActiveuserList] = useState([]);
+  const [testSum, setTestSum] = useState<any>(0);
+  // const [activeUserList, setActiveuserList] = useState([]);
 
   const [displayUserList, setDisplayUserList] = useState([]);
 
   useEffect(() => {
-    console.log("toggleWs", toggleWs);
+    // Set an interval to run the function every 30 minutes (30 minutes * 60 seconds * 1000 milliseconds).
+    const intervalId = setInterval(createUserList, 30 * 60 * 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    // console.log("toggleWs", toggleWs);
     createUserList();
     // getAssignedProjectDetails();
   }, [toggleWs]);
 
   const createUserList = async () => {
     const allUsers = await getUserList();
-    const activeUsers = await getUserLoginDetails();
+    const { filteredLoginDetails, userTotalLoginHours } =
+      await getUserLoginDetails();
 
-    const tmpUserList = allUsers.map((u: any) => {
-      const result: any = activeUsers.find((u1: any) => u.userid === u1.userid);
+    const tmpUserList = allUsers?.map((u: any) => {
+      const result: any = filteredLoginDetails?.find(
+        (u1: any) => u.userid === u1.userid
+      );
+      const result1: any = userTotalLoginHours?.find(
+        (u1: any) => u.userid == u1.userid
+      );
       return {
+        username: u.username,
         staffname: u.staffname,
         status: result ? "Active" : "Inactive",
+        totalhours: result1 ? result1.totalhours : "0h-0min",
         // taskname: pt.taskname,
         // projecttaskassignid: findAssignTask
         //   ? findAssignTask.projecttaskassignid
@@ -64,12 +81,22 @@ export const DashboardUserLoginTable = ({
   const getUserLoginDetails = async () => {
     const reponse = await fetch(pathname + "/api/auth/login");
     const res = await reponse.json();
-    const filteredLoginDetails = res.userLoginDetails.filter(
+    // setUserList(res.userLoginDetails);
+    /////////////////////
+    const userTotalLoginHours: any = calculateTotalHours(res.userLoginDetails);
+    setTestSum(userTotalLoginHours);
+    //////////////////////
+    const filteredLoginDetails = res.userLoginDetails?.filter(
       (detail) => detail.logouttime == ""
     );
     // setActiveuserList(filteredLoginDetails);
-    return filteredLoginDetails;
+    return { filteredLoginDetails, userTotalLoginHours };
   };
 
-  return <UserListTable userListIn={displayUserList} />;
+  return (
+    <div className="w-full">
+      {/* {JSON.stringify(displayUserList)} */}
+      <UserListTable userListIn={displayUserList} />
+    </div>
+  );
 };

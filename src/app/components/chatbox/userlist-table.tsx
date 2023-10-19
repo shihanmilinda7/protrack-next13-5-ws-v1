@@ -9,9 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export const UserListTable = ({ userListIn }: { userListIn: any[] }) => {
+  const { data: session, status } = useSession();
+  const username = session?.user?.username;
+
   const [userList, setUserList] = useState([]);
 
   useEffect(() => {
@@ -27,19 +31,54 @@ export const UserListTable = ({ userListIn }: { userListIn: any[] }) => {
             <TableColumn className="w-20 border border-blue-500">
               User
             </TableColumn>
-            <TableColumn className="w-10 border border-blue-500">
+            <TableColumn className="w-20 border border-blue-500">
               Hours
             </TableColumn>
-            <TableColumn className="w-10 border border-blue-500">
+            <TableColumn className="w-20 border border-blue-500">
               Status
             </TableColumn>
           </TableHeader>
           <TableBody>
             {userList?.map((tableRow: any, index: number) => (
-              <TableRow key={tableRow.staffname} className="">
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{tableRow.staffname}</TableCell>
-                <TableCell>-</TableCell>
+              <TableRow
+                key={tableRow.staffname}
+                className="border border-blue-500"
+              >
+                <TableCell className="w-10">{index + 1}</TableCell>
+                <TableCell>
+                  <span
+                    className={`${
+                      tableRow.username == username
+                        ? "inline-block mr-1 last:mr-0 py-1 px-2 rounded-full text-xs font-semibold uppercase bg-slate-200 text-black"
+                        : ""
+                    }`}
+                  >
+                    {tableRow.username == username ? "You" : tableRow.staffname}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  {tableRow.status == "Active" ? (
+                    <span
+                      className={`${
+                        tableRow.username == username
+                          ? "font-semibold text-black"
+                          : ""
+                      }`}
+                    >
+                      {tableRow.totalhours}+
+                    </span>
+                  ) : (
+                    <span
+                      className={`${
+                        tableRow.username == username
+                          ? "font-semibold text-black"
+                          : ""
+                      }`}
+                    >
+                      {tableRow.totalhours}
+                    </span>
+                  )}
+                </TableCell>
                 <TableCell>
                   <span
                     className={`inline-block mr-1 last:mr-0 py-1 px-2 rounded-full ${

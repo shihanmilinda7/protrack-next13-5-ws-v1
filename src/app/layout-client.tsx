@@ -5,7 +5,7 @@ import { AuthProvider } from "./providers";
 import { ToastContainer } from "react-toastify";
 import { GlobalContextProvider } from "./globalContext/store";
 import store from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function LayoutClientComponent({
   children,
@@ -13,15 +13,25 @@ export default function LayoutClientComponent({
   children: React.ReactNode;
 }) {
   // useEffect(() => {
-  //   const confirmClose = (e) => {
-  //     e.preventDefault();
-  //     e.returnValue = "";
+  //   const handleWindowClose = (event) => {
+  //     // Check if a flag in sessionStorage exists
+  //     const isReloading = sessionStorage.getItem("isReloading");
+
+  //     if (!isReloading) {
+  //       console.log("s[s[s[s[s[s[s[s[s[slslslslslslslslslsslsls",)
+
+  //       // Set a flag in sessionStorage to track page reload
+  //       sessionStorage.setItem("isReloading", "true");
+  //     } else {
+  //       // Clear the flag if it exists (page is being reloaded)
+  //       sessionStorage.removeItem("isReloading");
+  //     }
   //   };
 
-  //   window.addEventListener("beforeunload", confirmClose);
+  //   window.addEventListener("beforeunload", handleWindowClose);
 
   //   return () => {
-  //     window.removeEventListener("beforeunload", confirmClose);
+  //     window.removeEventListener("beforeunload", handleWindowClose);
   //   };
   // }, []);
   return (

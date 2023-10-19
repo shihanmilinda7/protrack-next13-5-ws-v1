@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3001", // Update with your frontend URL
+    // origin: process.env.DEVELOPMENT_FRONTEND_URL, // Update with your frontend URL
   },
 });
 
@@ -37,11 +38,12 @@ io.on("connection", (socket) => {
     console.log("A user disconnected: " + data);
   });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+  socket.on("disconnect", (a) => {
+    console.log("A user disconnected: " + socket.id);
+    console.log("a: " + a);
   });
 });
 
-server.listen(4000, () => {
-  console.log("WebSocket server is running on port 4000");
+server.listen(5000, () => {
+  console.log("WebSocket server is running on port 5000");
 });

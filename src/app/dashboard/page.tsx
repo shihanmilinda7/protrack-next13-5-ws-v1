@@ -13,7 +13,7 @@ import Calendar from "react-calendar";
 import Chatbox from "../components/chatbox/chatbox";
 import { UserListTable } from "../components/chatbox/userlist-table";
 import { DashboardUserLoginTable } from "../components/dashboard-userlogindetails/dashboard-userlogindetails";
-// import { webSocket } from "@/web-socket";
+import { webSocket } from "@/web-socket";
 import io from "socket.io-client";
 
 type TaskDashBoardObj = {
@@ -24,7 +24,8 @@ type TaskDashBoardObj = {
   categoryname?: string;
 };
 
-const webSocket = io("http://localhost:4000");
+// const webSocket = io("http://localhost:5000");
+// const webSocket = io(process.env.DEVELOPMENT_SOCKET_URL);
 export default function Dashboard() {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -43,6 +44,27 @@ export default function Dashboard() {
   //   if (userRole != "User") {
   //   }
   // }, [userRole]);
+
+  useEffect(() => {
+    // if (window.performance && window.performance.getEntriesByType) {
+    //   const navigationEntries =
+    //     window.performance.getEntriesByType("navigation");
+    //   if (navigationEntries.length > 0) {
+    //     const navigationEntry: any = navigationEntries[0];
+    //     if (navigationEntry.type === "navigate") {
+    //       console.log("Page initially loaded");
+    //     } else if (navigationEntry.type === "reload") {
+    //       console.log("Page is being reloaded");
+    //     }
+    //   } else {
+    //     console.log("PerformanceNavigationTiming data not available");
+    //   }
+    // } else {
+    //   console.log(
+    //     "PerformanceNavigationTiming is not supported in this browser"
+    //   );
+    // }
+  }, []);
 
   useEffect(() => {
     webSocket.emit("join_room", "adminroom");
@@ -65,6 +87,11 @@ export default function Dashboard() {
     webSocket.on("receive_logout", (data) => {
       setLogginCount((prv) => prv + 1);
     });
+
+    return () => {
+      webSocket.off("receive_logging");
+      webSocket.off("receive_logout");
+    };
   }, []);
 
   const getStaffDetails = async () => {
